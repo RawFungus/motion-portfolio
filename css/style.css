@@ -622,6 +622,13 @@ body.media-viewer-open {
   font-size: clamp(15px, 1.25vw, 20px);
 }
 
+.footer-credit {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .footer-contact {
   color: var(--text);
   font-size: clamp(44px, 5vw, 88px);
@@ -1026,6 +1033,10 @@ body.media-viewer-open {
 
   .footer-status {
     font-size: clamp(20px, 1.0417vw, 40px);
+  }
+
+  .footer-credit {
+    font-size: clamp(13px, .6771vw, 26px);
   }
 
   .footer-contact {
