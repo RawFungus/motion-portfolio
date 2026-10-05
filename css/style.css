@@ -509,6 +509,11 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  /* Once the intro becomes a single column, the yellow index no longer adds useful navigation. */
+  .index-panel {
+    display: none;
+  }
+
   .intro {
     min-height: auto;
   }
