@@ -16,7 +16,7 @@
 
   <title>Motion design — Избранные работы</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="css/style.css?v=23">
+  <link rel="stylesheet" href="css/style.css?v=24">
 </head>
 <body>
   <nav class="desktop-rail" data-desktop-rail aria-label="Быстрая навигация по разделам" aria-hidden="true">
@@ -296,6 +296,13 @@
                   loading="lazy"
                 >
               </div>
+              <div class="media-frame ratio-process">
+                <img
+                  src="assets/images/text-imp-gui.png"
+                  alt="Интерфейс инструмента Text IMP"
+                  loading="lazy"
+                >
+              </div>
             </div>
           </div>
 
@@ -352,9 +359,11 @@
 
   <div class="media-viewer" data-media-viewer role="dialog" aria-modal="true" aria-label="Fullscreen media viewer" hidden>
     <button class="media-viewer__close" type="button" data-media-viewer-close aria-label="Close fullscreen media">&times;</button>
+    <button class="media-viewer__nav media-viewer__nav--prev" type="button" data-media-viewer-prev aria-label="Previous media" hidden></button>
     <div class="media-viewer__stage" data-media-viewer-stage></div>
+    <button class="media-viewer__nav media-viewer__nav--next" type="button" data-media-viewer-next aria-label="Next media" hidden></button>
   </div>
 
-  <script src="js/main.js?v=7"></script>
+  <script src="js/main.js?v=8"></script>
 </body>
 </html>

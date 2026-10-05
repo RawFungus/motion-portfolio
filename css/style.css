@@ -471,6 +471,60 @@ body.media-viewer-open {
   outline: none;
 }
 
+.media-viewer__nav {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  width: clamp(42px, 3vw, 58px);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 0;
+  background: rgba(10, 10, 10, .72);
+  color: var(--text);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: color 140ms ease, border-color 140ms ease;
+}
+
+.media-viewer__nav[hidden] {
+  display: none;
+}
+
+.media-viewer__nav--prev {
+  left: clamp(12px, 1.6vw, 28px);
+}
+
+.media-viewer__nav--next {
+  right: clamp(12px, 1.6vw, 28px);
+}
+
+.media-viewer__nav::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 27%;
+  aspect-ratio: 1;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+}
+
+.media-viewer__nav--prev::before {
+  transform: translate(-36%, -50%) rotate(-135deg);
+}
+
+.media-viewer__nav--next::before {
+  transform: translate(-64%, -50%) rotate(45deg);
+}
+
+.media-viewer__nav:hover,
+.media-viewer__nav:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+  outline: none;
+}
+
 /* Media keeps its intrinsic proportions instead of being cropped to a layout ratio. */
 .ratio-portrait,
 .ratio-wide,

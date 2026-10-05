@@ -198,20 +198,58 @@ if (indexNut) {
 
 
 // Images and videos open in a viewport-sized media viewer.
+// Each .media-area acts as its own gallery, so arrows never jump between projects.
 // Videos are cloned so the autoplay element in the project layout stays in place.
 const mediaViewer = document.querySelector('[data-media-viewer]');
 const mediaViewerStage = document.querySelector('[data-media-viewer-stage]');
 const mediaViewerClose = document.querySelector('[data-media-viewer-close]');
+const mediaViewerPrev = document.querySelector('[data-media-viewer-prev]');
+const mediaViewerNext = document.querySelector('[data-media-viewer-next]');
 const mediaViewerPage = document.querySelector('.page-shell');
 
-if (mediaViewer && mediaViewerStage && mediaViewerClose) {
+if (
+  mediaViewer &&
+  mediaViewerStage &&
+  mediaViewerClose &&
+  mediaViewerPrev &&
+  mediaViewerNext
+) {
   const mediaFrames = [...document.querySelectorAll('.media-frame')];
   let activeSource = null;
   let activeViewerMedia = null;
+  let activeGroup = [];
+  let activeIndex = -1;
   let sourceRect = null;
   let sourceVideoWasPlaying = false;
   let sourceVideoTime = 0;
   let previousFocus = null;
+
+  const getFrameSource = (frame) => frame.querySelector(':scope > img, :scope > video');
+
+  const getMediaGroup = (frame) => {
+    const groupRoot = frame.closest('.media-area');
+    if (!groupRoot) {
+      const source = getFrameSource(frame);
+      return source ? [source] : [];
+    }
+
+    return [...groupRoot.querySelectorAll('.media-frame')]
+      .map(getFrameSource)
+      .filter(Boolean);
+  };
+
+  const updateViewerNavigation = () => {
+    const hasSiblings = activeGroup.length > 1;
+    mediaViewerPrev.hidden = !hasSiblings;
+    mediaViewerNext.hidden = !hasSiblings;
+
+    if (!hasSiblings || activeIndex < 0) return;
+
+    const position = activeIndex + 1;
+    const total = activeGroup.length;
+    mediaViewerPrev.setAttribute('aria-label', `Previous media (${position} of ${total})`);
+    mediaViewerNext.setAttribute('aria-label', `Next media (${position} of ${total})`);
+  };
 
   const fitViewerMedia = () => {
     if (!activeViewerMedia || !sourceRect) return;
@@ -239,30 +277,126 @@ if (mediaViewer && mediaViewerStage && mediaViewerClose) {
     activeViewerMedia.style.height = `${Math.max(1, Math.floor(mediaHeight * scale))}px`;
   };
 
-  const closeMediaViewer = () => {
-    if (mediaViewer.hidden) return;
+  const releaseActiveVideo = () => {
+    if (
+      !(activeSource instanceof HTMLVideoElement) ||
+      !(activeViewerMedia instanceof HTMLVideoElement)
+    ) {
+      sourceVideoWasPlaying = false;
+      sourceVideoTime = 0;
+      return;
+    }
+
+    if (activeViewerMedia.readyState >= 1 && Number.isFinite(activeViewerMedia.currentTime)) {
+      try {
+        activeSource.currentTime = activeViewerMedia.currentTime;
+      } catch (error) {
+        // Keep the original time if the browser cannot seek yet.
+      }
+    }
+
+    activeViewerMedia.pause();
+
+    if (sourceVideoWasPlaying) {
+      const playPromise = activeSource.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {});
+      }
+    }
+
+    sourceVideoWasPlaying = false;
+    sourceVideoTime = 0;
+  };
+
+  const showViewerSource = (source) => {
+    releaseActiveVideo();
+
+    activeSource = source;
+    sourceRect = source.getBoundingClientRect();
+    activeViewerMedia = source.cloneNode(true);
+    activeViewerMedia.classList.add('media-viewer__asset');
+    activeViewerMedia.removeAttribute('id');
+    activeViewerMedia.removeAttribute('data-autoplay');
+
+    if (activeViewerMedia instanceof HTMLImageElement) {
+      activeViewerMedia.loading = 'eager';
+    }
 
     if (
-      activeSource instanceof HTMLVideoElement &&
+      source instanceof HTMLVideoElement &&
       activeViewerMedia instanceof HTMLVideoElement
     ) {
-      if (activeViewerMedia.readyState >= 1 && Number.isFinite(activeViewerMedia.currentTime)) {
+      const sourceVideo = source;
+      const viewerVideo = activeViewerMedia;
+      const startTime = source.currentTime || 0;
+
+      sourceVideoWasPlaying = !source.paused;
+      sourceVideoTime = startTime;
+      source.pause();
+
+      viewerVideo.controls = true;
+      viewerVideo.autoplay = true;
+      viewerVideo.playsInline = true;
+      forceMuteVideo(viewerVideo);
+
+      const startViewerVideo = () => {
+        if (activeViewerMedia !== viewerVideo || activeSource !== sourceVideo) return;
+
+        const duration = viewerVideo.duration;
+        const maxTime = Number.isFinite(duration)
+          ? Math.max(0, duration - 0.05)
+          : startTime;
+
         try {
-          activeSource.currentTime = activeViewerMedia.currentTime;
+          viewerVideo.currentTime = Math.min(startTime, maxTime);
         } catch (error) {
-          // Keep the original time if the browser cannot seek yet.
+          // Starting from zero is acceptable if seeking is not available yet.
         }
-      }
 
-      activeViewerMedia.pause();
-
-      if (sourceVideoWasPlaying) {
-        const playPromise = activeSource.play();
+        fitViewerMedia();
+        const playPromise = viewerVideo.play();
         if (playPromise && typeof playPromise.catch === 'function') {
           playPromise.catch(() => {});
         }
-      }
+      };
+
+      viewerVideo.addEventListener('loadedmetadata', startViewerVideo, { once: true });
     }
+
+    mediaViewerStage.replaceChildren(activeViewerMedia);
+
+    if (activeViewerMedia instanceof HTMLImageElement) {
+      if (activeViewerMedia.complete) {
+        fitViewerMedia();
+      } else {
+        activeViewerMedia.addEventListener('load', fitViewerMedia, { once: true });
+      }
+    } else if (
+      activeViewerMedia instanceof HTMLVideoElement &&
+      activeViewerMedia.readyState >= 1
+    ) {
+      // Metadata can already be available when the browser has this video cached.
+      activeViewerMedia.dispatchEvent(new Event('loadedmetadata'));
+    }
+
+    updateViewerNavigation();
+    window.requestAnimationFrame(fitViewerMedia);
+  };
+
+  const navigateMediaViewer = (direction) => {
+    if (mediaViewer.hidden || activeGroup.length < 2) return;
+
+    activeIndex = (
+      activeIndex + direction + activeGroup.length
+    ) % activeGroup.length;
+
+    showViewerSource(activeGroup[activeIndex]);
+  };
+
+  const closeMediaViewer = () => {
+    if (mediaViewer.hidden) return;
+
+    releaseActiveVideo();
 
     mediaViewer.hidden = true;
     mediaViewerStage.replaceChildren();
@@ -274,10 +408,11 @@ if (mediaViewer && mediaViewerStage && mediaViewerClose) {
     const focusTarget = previousFocus;
     activeSource = null;
     activeViewerMedia = null;
+    activeGroup = [];
+    activeIndex = -1;
     sourceRect = null;
-    sourceVideoWasPlaying = false;
-    sourceVideoTime = 0;
     previousFocus = null;
+    updateViewerNavigation();
 
     if (focusTarget instanceof HTMLElement) {
       focusTarget.focus({ preventScroll: true });
@@ -287,51 +422,15 @@ if (mediaViewer && mediaViewerStage && mediaViewerClose) {
   const openMediaViewer = (source, trigger) => {
     if (!mediaViewer.hidden) return;
 
-    activeSource = source;
-    sourceRect = source.getBoundingClientRect();
+    activeGroup = getMediaGroup(trigger);
+    activeIndex = activeGroup.indexOf(source);
+
+    if (activeIndex < 0) {
+      activeGroup = [source];
+      activeIndex = 0;
+    }
+
     previousFocus = document.activeElement;
-    activeViewerMedia = source.cloneNode(true);
-    activeViewerMedia.classList.add('media-viewer__asset');
-    activeViewerMedia.removeAttribute('id');
-    activeViewerMedia.removeAttribute('data-autoplay');
-
-    if (activeViewerMedia instanceof HTMLImageElement) {
-      activeViewerMedia.loading = 'eager';
-      activeViewerMedia.addEventListener('load', fitViewerMedia, { once: true });
-    }
-
-    if (
-      source instanceof HTMLVideoElement &&
-      activeViewerMedia instanceof HTMLVideoElement
-    ) {
-      sourceVideoWasPlaying = !source.paused;
-      sourceVideoTime = source.currentTime || 0;
-      source.pause();
-
-      activeViewerMedia.controls = true;
-      activeViewerMedia.autoplay = true;
-      activeViewerMedia.playsInline = true;
-      forceMuteVideo(activeViewerMedia);
-
-      activeViewerMedia.addEventListener('loadedmetadata', () => {
-        const duration = activeViewerMedia.duration;
-        const maxTime = Number.isFinite(duration)
-          ? Math.max(0, duration - 0.05)
-          : sourceVideoTime;
-
-        try {
-          activeViewerMedia.currentTime = Math.min(sourceVideoTime, maxTime);
-        } catch (error) {
-          // Starting from zero is acceptable if seeking is not available yet.
-        }
-
-        fitViewerMedia();
-        const playPromise = activeViewerMedia.play();
-        if (playPromise && typeof playPromise.catch === 'function') {
-          playPromise.catch(() => {});
-        }
-      }, { once: true });
-    }
 
     const scrollbarWidth = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
     document.body.style.setProperty('--media-viewer-scrollbar', `${scrollbarWidth}px`);
@@ -339,8 +438,9 @@ if (mediaViewer && mediaViewerStage && mediaViewerClose) {
     mediaViewerPage?.setAttribute('inert', '');
     desktopRail?.setAttribute('inert', '');
 
-    mediaViewerStage.replaceChildren(activeViewerMedia);
     mediaViewer.hidden = false;
+    showViewerSource(source);
+
     window.requestAnimationFrame(() => {
       fitViewerMedia();
       mediaViewerClose.focus({ preventScroll: true });
@@ -350,7 +450,7 @@ if (mediaViewer && mediaViewerStage && mediaViewerClose) {
   };
 
   mediaFrames.forEach((frame) => {
-    const source = frame.querySelector(':scope > img, :scope > video');
+    const source = getFrameSource(frame);
     if (!source) return;
 
     frame.classList.add('is-viewable');
@@ -371,6 +471,8 @@ if (mediaViewer && mediaViewerStage && mediaViewerClose) {
   });
 
   mediaViewerClose.addEventListener('click', closeMediaViewer);
+  mediaViewerPrev.addEventListener('click', () => navigateMediaViewer(-1));
+  mediaViewerNext.addEventListener('click', () => navigateMediaViewer(1));
 
   mediaViewer.addEventListener('click', (event) => {
     if (event.target === mediaViewer || event.target === mediaViewerStage) {
@@ -379,8 +481,21 @@ if (mediaViewer && mediaViewerStage && mediaViewerClose) {
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !mediaViewer.hidden) {
+    if (mediaViewer.hidden) return;
+
+    if (event.key === 'Escape') {
       closeMediaViewer();
+      return;
+    }
+
+    if (event.target instanceof HTMLVideoElement) return;
+
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      navigateMediaViewer(-1);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      navigateMediaViewer(1);
     }
   });
 
