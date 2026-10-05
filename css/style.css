@@ -116,6 +116,7 @@ h1 {
 }
 
 .intro-note {
+  max-width: 70ch;
   margin: clamp(72px, 10vh, 130px) 0 0;
   color: var(--muted);
   font-size: clamp(14px, 1.1vw, 19px);
