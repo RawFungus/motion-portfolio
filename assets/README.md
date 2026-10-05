@@ -1,10 +1,10 @@
 # Медиа для портфолио
 
-В `index.html` сейчас стоят плейсхолдеры. Их можно заменять по одному, не меняя сетку.
+Все медиа подключаются напрямую из `index.html`. Сборщик не используется.
 
 ## Видео
 
-Положите файлы в `assets/video/`, например:
+Видео лежат в `assets/video/`:
 
 - `merch-ad.mp4`
 - `hook-promo.mp4`
@@ -12,11 +12,11 @@
 - `placeholder-02.mp4`
 - `text-imp.mp4`
 
-Затем замените содержимое нужного `.media-frame` на:
+Базовая разметка видео:
 
 ```html
 <video
-  src="assets/video/merch-ad.mp4"
+  src="assets/video/project.mp4"
   autoplay
   muted
   loop
@@ -26,41 +26,39 @@
 ></video>
 ```
 
-`muted` нужен для надёжного autoplay в современных браузерах. Скрипт `js/main.js` автоматически ставит видео на паузу, когда оно уходит далеко за пределы экрана.
+`js/main.js` ставит autoplay-видео на паузу вне экрана и принудительно держит все видео без звука, включая копию во fullscreen viewer.
 
-Если видео должно содержать звук, лучше убрать `autoplay` и добавить `controls`:
+## Изображения
 
-```html
-<video
-  src="assets/video/project.mp4"
-  controls
-  playsinline
-  preload="metadata"
-></video>
-```
+Изображения лежат в `assets/images/`. Сейчас сайт использует в том числе:
 
-## Картинки
+- `merch-process-01.png`
+- `merch-process-02.png`
+- `hook-storyboard.png`
+- `hook-figma.png`
+- `hook-blender.png`
+- `hook-render.png`
+- `fbox-1.png` … `fbox-5.png`
+- `text-imp-process.png`
+- `text-imp-gui.png`
+- `nut.svg`
 
-Положите изображения в `assets/images/`, например:
-
-- `merch-process-01.webp`
-- `merch-process-02.webp`
-- `hook-storyboard.webp`
-- `hook-figma.webp`
-- `hook-blender.webp`
-- `hook-render.webp`
-- `text-imp-process.webp`
-
-Внутри нужного `.media-frame` замените `.placeholder` на:
+Базовая разметка изображения:
 
 ```html
-<img
-  src="assets/images/merch-process-01.webp"
-  alt="Процесс работы над Merch Ad"
-  loading="lazy"
->
+<div class="media-frame">
+  <img
+    src="assets/images/project.png"
+    alt="Описание изображения"
+    loading="lazy"
+  >
+</div>
 ```
+
+Все `.media-frame` внутри одного `.media-area` автоматически объединяются в одну fullscreen-галерею. Для добавления нового кадра в существующий проект отдельный JavaScript не нужен.
 
 ## Форматы
 
-Для статичных изображений удобнее использовать WebP или AVIF. Для motion — MP4/H.264 как наиболее беспроблемный вариант для GitHub Pages и браузеров.
+Для статичных изображений подходят PNG, WebP или AVIF. Для motion — MP4/H.264 как наиболее совместимый вариант для GitHub Pages и современных браузеров.
+
+При замене изображения желательно сохранять близкое соотношение сторон: CSS подстроит ширину, но сильно отличающийся aspect ratio изменит высоту композиции.

@@ -221,7 +221,6 @@ if (
   let activeIndex = -1;
   let sourceRect = null;
   let sourceVideoWasPlaying = false;
-  let sourceVideoTime = 0;
   let previousFocus = null;
 
   const getFrameSource = (frame) => frame.querySelector(':scope > img, :scope > video');
@@ -283,7 +282,6 @@ if (
       !(activeViewerMedia instanceof HTMLVideoElement)
     ) {
       sourceVideoWasPlaying = false;
-      sourceVideoTime = 0;
       return;
     }
 
@@ -305,7 +303,6 @@ if (
     }
 
     sourceVideoWasPlaying = false;
-    sourceVideoTime = 0;
   };
 
   const showViewerSource = (source) => {
@@ -331,7 +328,6 @@ if (
       const startTime = source.currentTime || 0;
 
       sourceVideoWasPlaying = !source.paused;
-      sourceVideoTime = startTime;
       source.pause();
 
       viewerVideo.controls = true;
