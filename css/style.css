@@ -134,7 +134,6 @@ h1 {
 
 .project-index {
   padding: clamp(20px, 2.1vw, 38px);
-  border-bottom: 1px solid rgba(0, 0, 0, .62);
 }
 
 .project-index a {
@@ -160,7 +159,11 @@ h1 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(5, 1fr);
-  min-height: 240px;
+  width: 100%;
+  aspect-ratio: 6 / 5;
+  min-height: 0;
+  align-self: end;
+  border-top: 1px solid rgba(0, 0, 0, .55);
 }
 
 .index-grid i {
