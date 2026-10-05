@@ -117,7 +117,7 @@ h1 {
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 100%;
-  overflow: hidden;
+  overflow: visible;
   color: var(--accent-text);
   background: var(--accent);
   border: 1px solid rgba(0, 0, 0, .55);
@@ -125,10 +125,13 @@ h1 {
 }
 
 .project-index {
-  padding: clamp(20px, 2.1vw, 38px);
+  --index-pad: clamp(20px, 2.1vw, 38px);
+  --active-tab-outset: clamp(8px, .65vw, 14px);
+  padding: var(--index-pad);
 }
 
 .project-index a {
+  position: relative;
   display: grid;
   grid-template-columns: 2.3ch 1fr;
   gap: 12px;
@@ -138,13 +141,33 @@ h1 {
   font-size: clamp(21px, 2vw, 36px);
   line-height: 1.08;
   letter-spacing: -.035em;
+  transition: none;
+}
+
+.project-index a > span {
   transition: opacity 160ms ease, transform 160ms ease;
 }
 
-.project-index a:hover,
-.project-index a.is-active {
+.project-index a::before {
+  content: "";
+  position: absolute;
+  top: .12em;
+  bottom: .12em;
+  left: calc(-1 * var(--index-pad) - var(--active-tab-outset) - 1px);
+  width: calc(var(--index-pad) + var(--active-tab-outset) - 6px);
+  background: var(--bg);
+  border-radius: 4px;
+  z-index: 1;
+  opacity: 0;
+}
+
+.project-index a:hover > span {
   opacity: .52;
   transform: translateX(5px);
+}
+
+.project-index a.is-active::before {
+  opacity: 1;
 }
 
 .index-grid {
@@ -684,6 +707,10 @@ body.media-viewer-open {
     min-height: 650px;
   }
 
+  .tool-line {
+    color: var(--accent);
+  }
+
   .project-heading {
     gap: 10px;
   }
@@ -951,7 +978,8 @@ body.media-viewer-open {
   }
 
   .project-index {
-    padding: clamp(38px, 1.9792vw, 76px);
+    --index-pad: clamp(38px, 1.9792vw, 76px);
+    --active-tab-outset: clamp(14px, .7292vw, 28px);
   }
 
   .project-index a {
