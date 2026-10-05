@@ -1,12 +1,23 @@
-# Motion Portfolio — GitHub Pages test
+# Motion Portfolio — GitHub Pages
 
-Minimal static test page for GitHub Pages.
+Готовая статическая страница для GitHub Pages.
 
-## Files
-- `index.html` — entry page
-- `css/style.css` — styles
-- `js/main.js` — autoplay/pause-on-scroll logic
-- `assets/video/test-motion.mp4` — local test video
-- `.nojekyll` — tells GitHub Pages to serve the files as a plain static site
+## Публикация
 
-All asset paths are relative, so the page works both at `username.github.io` and at `username.github.io/repository-name/`.
+1. Загрузите содержимое этой папки в корень репозитория.
+2. Откройте `Settings → Pages`.
+3. Выберите `Deploy from a branch`.
+4. Выберите `main` и `/ (root)`.
+5. Сохраните настройки.
+
+## Замена медиа
+
+Инструкция находится в `assets/README.md`.
+
+## Основные файлы
+
+- `index.html` — структура и тексты.
+- `css/style.css` — вся сетка и адаптив.
+- `js/main.js` — подсветка навигации и оптимизация autoplay-видео.
+
+Страница использует только относительные пути, поэтому корректно работает и в репозитории вида `username.github.io/portfolio/`.

@@ -3,42 +3,290 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Test page for a motion design portfolio on GitHub Pages">
-  <title>Motion Portfolio — GitHub Pages Test</title>
+  <meta name="description" content="Motion design portfolio: избранные коммерческие проекты, 3D, 2D motion и инструменты для production workflow.">
+  <title>Motion design — Избранные работы</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <main>
-    <header class="topbar">
-      <a class="brand" href="#">YOUR NAME</a>
-      <span class="status"><span class="dot"></span> GitHub Pages test</span>
+  <div class="page-shell">
+    <header class="intro" id="intro">
+      <div class="intro-main">
+        <div class="intro-title-wrap">
+          <p class="eyebrow">Motion portfolio</p>
+          <h1>Motion design</h1>
+          <p class="intro-subtitle">Избранные работы</p>
+        </div>
+
+        <ul class="tool-line" aria-label="Основные инструменты">
+          <li>After Effects</li>
+          <li>Blender</li>
+          <li>AI-assisted production</li>
+        </ul>
+
+        <p class="intro-copy">
+          Здесь — несколько проектов с разными задачами, форматами и способами их решения.
+          Мне интереснее найти подходящий инструмент под конкретную задачу, чем придерживаться
+          одного визуального подхода.
+        </p>
+
+        <p class="intro-note">
+          Все работы сделаны для реальных коммерческих задач и приняты заказчиками.
+          Часть из них вышла на городские экраны Москвы.
+        </p>
+      </div>
+
+      <aside class="index-panel" aria-label="Навигация по проектам">
+        <nav class="project-index">
+          <a href="#intro" data-section-link="intro"><span>01</span> Intro</a>
+          <a href="#merch" data-section-link="merch"><span>02</span> Merch Ad</a>
+          <a href="#hook" data-section-link="hook"><span>03</span> Hook Promo</a>
+          <a href="#placeholder" data-section-link="placeholder"><span>04</span> Placeholder Ads</a>
+          <a href="#text-imp" data-section-link="text-imp"><span>05</span> Text IMP</a>
+        </nav>
+        <div class="index-grid" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+      </aside>
     </header>
 
-    <section class="hero">
-      <p class="eyebrow">MOTION DESIGN PORTFOLIO</p>
-      <h1>Если ты видишь эту страницу — GitHub Pages работает.</h1>
-      <p class="lead">Ниже — тестовое MP4. Оно должно запуститься автоматически, без звука и зациклиться.</p>
-    </section>
+    <main>
+      <section class="project" id="merch" data-section="merch">
+        <div class="project-heading">
+          <h2>Merch Ad</h2>
+          <p>3D Product Motion</p>
+        </div>
 
-    <section class="project" aria-labelledby="project-title">
-      <div class="project-meta">
-        <h2 id="project-title">Test motion / 001</h2>
-        <p>Autoplay · muted · loop · playsinline</p>
-      </div>
+        <div class="project-layout">
+          <div class="media-area merch-media">
+            <!-- VIDEO PLACEHOLDER: замените div на video. Пример есть в assets/README.md -->
+            <div class="media-frame media-video ratio-portrait">
+              <div class="placeholder">
+                <span>VIDEO 01</span>
+                <small>Финальный ролик / вертикальный формат</small>
+              </div>
+            </div>
 
-      <div class="video-frame">
-        <video id="demo-video" autoplay muted loop playsinline preload="metadata">
-          <source src="assets/video/test-motion.mp4" type="video/mp4">
-          Ваш браузер не поддерживает HTML5 video.
-        </video>
-        <div class="video-status" id="video-status">checking video…</div>
-      </div>
-    </section>
+            <div class="media-stack">
+              <!-- IMAGE PLACEHOLDER -->
+              <div class="media-frame ratio-wide">
+                <div class="placeholder placeholder-muted">
+                  <span>IMAGE 01</span>
+                  <small>Blender setup / процесс</small>
+                </div>
+              </div>
+              <!-- IMAGE PLACEHOLDER -->
+              <div class="media-frame ratio-wide">
+                <div class="placeholder placeholder-muted">
+                  <span>IMAGE 02</span>
+                  <small>Материалы / сцена / кадр из процесса</small>
+                </div>
+              </div>
+            </div>
+          </div>
 
-    <section class="note">
-      <p>Следующий этап — заменить этот тестовый блок на твои фреймы из Figma и реальные ролики.</p>
-    </section>
-  </main>
+          <div class="project-copy">
+            <div class="copy-block">
+              <h3>Задача</h3>
+              <p>
+                У студии появился доступ к сети городских экранов. За короткий срок нужно было
+                собрать несколько рекламных материалов, которые одновременно продвигают услуги
+                студии и заполняют эфир.
+              </p>
+            </div>
+
+            <div class="copy-block">
+              <h3>Подход</h3>
+              <p>
+                В основе — вращающаяся 3D-модель футболки с отсылкой к Quake и эстетике ранних
+                2000-х. Простое движение оставляет внимание на сообщении, а бесшовный loop позволяет
+                занимать несколько эфирных слотов без заметной склейки.
+              </p>
+            </div>
+
+            <p class="workflow">Раскадровка → Figma → Blender → Render → After Effects → Final</p>
+            <ul class="tags" aria-label="Теги проекта Merch Ad">
+              <li>Blender</li>
+              <li>Product Animation</li>
+              <li>Textures</li>
+              <li>Motion Design</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="project" id="hook" data-section="hook">
+        <div class="project-heading">
+          <h2>Hook Promo</h2>
+          <p>3D Brand Motion</p>
+        </div>
+
+        <div class="project-layout">
+          <div class="media-area hook-media">
+            <!-- VIDEO PLACEHOLDER -->
+            <div class="media-frame media-video ratio-banner">
+              <div class="placeholder">
+                <span>VIDEO 02</span>
+                <small>Финальный promo / широкий формат</small>
+              </div>
+            </div>
+
+            <div class="process-strip">
+              <div class="media-frame ratio-thumb"><div class="placeholder placeholder-muted"><span>IMAGE</span><small>Storyboard</small></div></div>
+              <div class="media-frame ratio-thumb"><div class="placeholder placeholder-muted"><span>IMAGE</span><small>Figma</small></div></div>
+              <div class="media-frame ratio-thumb"><div class="placeholder placeholder-muted"><span>IMAGE</span><small>Blender</small></div></div>
+              <div class="media-frame ratio-thumb"><div class="placeholder placeholder-muted"><span>IMAGE</span><small>Render</small></div></div>
+            </div>
+          </div>
+
+          <div class="project-copy">
+            <div class="copy-block">
+              <h3>Задача</h3>
+              <p>
+                Сделать экспериментальный ролик, который передаёт характер студии и выделяется
+                в потоке преимущественно статичной рекламы на информационных экранах.
+              </p>
+            </div>
+
+            <div class="copy-block">
+              <h3>Подход</h3>
+              <p>
+                Собрал короткий сюжет и раскадровку, где движение удерживает внимание и постепенно
+                приводит зрителя к контактам студии.
+              </p>
+            </div>
+
+            <p class="workflow">Раскадровка → Figma → Blender → Render → After Effects → Final</p>
+            <ul class="tags" aria-label="Теги проекта Hook Promo">
+              <li>3D Animation</li>
+              <li>Materials</li>
+              <li>Typography</li>
+              <li>Compositing</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="project" id="placeholder" data-section="placeholder">
+        <div class="project-heading">
+          <h2>Placeholder Ads</h2>
+          <p>2D Motion</p>
+        </div>
+
+        <div class="project-layout">
+          <div class="media-area placeholder-media">
+            <!-- VIDEO PLACEHOLDER -->
+            <div class="media-frame media-video ratio-story">
+              <div class="placeholder">
+                <span>VIDEO 03</span>
+                <small>Placeholder / вариант 01</small>
+              </div>
+            </div>
+            <!-- VIDEO PLACEHOLDER -->
+            <div class="media-frame media-video ratio-story">
+              <div class="placeholder">
+                <span>VIDEO 04</span>
+                <small>Placeholder / вариант 02</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-copy">
+            <div class="copy-block">
+              <h3>Задача</h3>
+              <p>
+                Закрыть пустые слоты в трансляции на информационных стойках и одновременно
+                ненавязчиво продвигать услуги клиента.
+              </p>
+            </div>
+
+            <div class="copy-block">
+              <h3>Подход</h3>
+              <p>
+                Простые зацикленные композиции постоянно держат экран в движении: показывают,
+                что он активен, и на короткое время цепляют взгляд без ощущения отдельного рекламного ролика.
+              </p>
+            </div>
+
+            <ul class="tags" aria-label="Теги проекта Placeholder Ads">
+              <li>Expressions</li>
+              <li>Procedural Motion</li>
+              <li>Timing</li>
+              <li>Loops</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="project" id="text-imp" data-section="text-imp">
+        <div class="project-heading">
+          <h2>Text IMP</h2>
+          <p>Custom AE Tool</p>
+        </div>
+
+        <div class="project-layout text-tool-layout">
+          <div class="media-area text-tool-media">
+            <!-- VIDEO PLACEHOLDER -->
+            <div class="media-frame media-video ratio-tool">
+              <div class="placeholder">
+                <span>VIDEO 05</span>
+                <small>Демонстрация инструмента</small>
+              </div>
+            </div>
+
+            <!-- IMAGE PLACEHOLDER -->
+            <div class="media-frame ratio-process">
+              <div class="placeholder placeholder-muted">
+                <span>IMAGE 03</span>
+                <small>Фрагмент рабочего процесса / интерфейс</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-copy">
+            <div class="copy-block">
+              <h3>Задача</h3>
+              <p>
+                Для серии видео-тренировок был нужен шаблон с большим количеством текста,
+                который регулярно менялся от ролика к ролику.
+              </p>
+            </div>
+
+            <div class="copy-block">
+              <h3>Подход</h3>
+              <p>
+                Чтобы не редактировать десятки текстовых слоёв вручную, я собрал инструмент
+                для After Effects, который позволяет менять весь текст проекта из одного окна.
+              </p>
+            </div>
+
+            <div class="copy-block compact-block">
+              <h3>Почему свой инструмент</h3>
+              <p>
+                Готовые решения не полностью подходили под этот workflow, а часть коммерческих
+                инструментов была неудобна из-за региональных и платёжных ограничений.
+                Для конкретной задачи оказалось проще собрать собственный инструмент.
+              </p>
+            </div>
+
+            <ul class="tags" aria-label="Теги проекта Text IMP">
+              <li>After Effects</li>
+              <li>Automation</li>
+              <li>AI-assisted coding</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a href="#intro">Наверх ↑</a>
+      <p>Motion design portfolio</p>
+    </footer>
+  </div>
 
   <script src="js/main.js"></script>
 </body>
