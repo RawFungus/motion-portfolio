@@ -430,7 +430,7 @@ h1 {
 
 .workflow {
   max-width: var(--copy-width);
-  margin: auto 0 22px;
+  margin: auto 0 12px;
   color: var(--muted);
   font-size: 13px;
   line-height: 1.55;
@@ -447,6 +447,11 @@ h1 {
   color: var(--accent);
   font-size: 11px;
   letter-spacing: .02em;
+}
+
+/* Keep the workflow line together with the project tags at the bottom of the copy column. */
+.workflow + .tags {
+  margin-top: 0;
 }
 
 .site-footer {
