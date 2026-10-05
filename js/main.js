@@ -177,3 +177,196 @@ if (indexNut) {
     reducedMotionMedia.addListener(handleReducedMotionChange);
   }
 }
+
+
+// Images and videos open in a viewport-sized media viewer.
+// Videos are cloned so the autoplay element in the project layout stays in place.
+const mediaViewer = document.querySelector('[data-media-viewer]');
+const mediaViewerStage = document.querySelector('[data-media-viewer-stage]');
+const mediaViewerClose = document.querySelector('[data-media-viewer-close]');
+const mediaViewerPage = document.querySelector('.page-shell');
+
+if (mediaViewer && mediaViewerStage && mediaViewerClose) {
+  const mediaFrames = [...document.querySelectorAll('.media-frame')];
+  let activeSource = null;
+  let activeViewerMedia = null;
+  let sourceRect = null;
+  let sourceVideoWasPlaying = false;
+  let sourceVideoTime = 0;
+  let previousFocus = null;
+
+  const fitViewerMedia = () => {
+    if (!activeViewerMedia || !sourceRect) return;
+
+    const stageRect = mediaViewerStage.getBoundingClientRect();
+    let mediaWidth = sourceRect.width;
+    let mediaHeight = sourceRect.height;
+
+    if (activeViewerMedia instanceof HTMLImageElement) {
+      mediaWidth = activeViewerMedia.naturalWidth || mediaWidth;
+      mediaHeight = activeViewerMedia.naturalHeight || mediaHeight;
+    } else if (activeViewerMedia instanceof HTMLVideoElement) {
+      mediaWidth = activeViewerMedia.videoWidth || mediaWidth;
+      mediaHeight = activeViewerMedia.videoHeight || mediaHeight;
+    }
+
+    if (!mediaWidth || !mediaHeight || !stageRect.width || !stageRect.height) return;
+
+    const scale = Math.min(
+      stageRect.width / mediaWidth,
+      stageRect.height / mediaHeight
+    );
+
+    activeViewerMedia.style.width = `${Math.max(1, Math.floor(mediaWidth * scale))}px`;
+    activeViewerMedia.style.height = `${Math.max(1, Math.floor(mediaHeight * scale))}px`;
+  };
+
+  const closeMediaViewer = () => {
+    if (mediaViewer.hidden) return;
+
+    if (
+      activeSource instanceof HTMLVideoElement &&
+      activeViewerMedia instanceof HTMLVideoElement
+    ) {
+      if (activeViewerMedia.readyState >= 1 && Number.isFinite(activeViewerMedia.currentTime)) {
+        try {
+          activeSource.currentTime = activeViewerMedia.currentTime;
+        } catch (error) {
+          // Keep the original time if the browser cannot seek yet.
+        }
+      }
+
+      activeViewerMedia.pause();
+
+      if (sourceVideoWasPlaying) {
+        const playPromise = activeSource.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(() => {});
+        }
+      }
+    }
+
+    mediaViewer.hidden = true;
+    mediaViewerStage.replaceChildren();
+    document.body.classList.remove('media-viewer-open');
+    document.body.style.removeProperty('--media-viewer-scrollbar');
+    mediaViewerPage?.removeAttribute('inert');
+    desktopRail?.removeAttribute('inert');
+
+    const focusTarget = previousFocus;
+    activeSource = null;
+    activeViewerMedia = null;
+    sourceRect = null;
+    sourceVideoWasPlaying = false;
+    sourceVideoTime = 0;
+    previousFocus = null;
+
+    if (focusTarget instanceof HTMLElement) {
+      focusTarget.focus({ preventScroll: true });
+    }
+  };
+
+  const openMediaViewer = (source, trigger) => {
+    if (!mediaViewer.hidden) return;
+
+    activeSource = source;
+    sourceRect = source.getBoundingClientRect();
+    previousFocus = document.activeElement;
+    activeViewerMedia = source.cloneNode(true);
+    activeViewerMedia.classList.add('media-viewer__asset');
+    activeViewerMedia.removeAttribute('id');
+    activeViewerMedia.removeAttribute('data-autoplay');
+
+    if (activeViewerMedia instanceof HTMLImageElement) {
+      activeViewerMedia.loading = 'eager';
+      activeViewerMedia.addEventListener('load', fitViewerMedia, { once: true });
+    }
+
+    if (
+      source instanceof HTMLVideoElement &&
+      activeViewerMedia instanceof HTMLVideoElement
+    ) {
+      sourceVideoWasPlaying = !source.paused;
+      sourceVideoTime = source.currentTime || 0;
+      source.pause();
+
+      activeViewerMedia.controls = true;
+      activeViewerMedia.autoplay = true;
+      activeViewerMedia.playsInline = true;
+      activeViewerMedia.muted = source.muted;
+
+      activeViewerMedia.addEventListener('loadedmetadata', () => {
+        const duration = activeViewerMedia.duration;
+        const maxTime = Number.isFinite(duration)
+          ? Math.max(0, duration - 0.05)
+          : sourceVideoTime;
+
+        try {
+          activeViewerMedia.currentTime = Math.min(sourceVideoTime, maxTime);
+        } catch (error) {
+          // Starting from zero is acceptable if seeking is not available yet.
+        }
+
+        fitViewerMedia();
+        const playPromise = activeViewerMedia.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(() => {});
+        }
+      }, { once: true });
+    }
+
+    const scrollbarWidth = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+    document.body.style.setProperty('--media-viewer-scrollbar', `${scrollbarWidth}px`);
+    document.body.classList.add('media-viewer-open');
+    mediaViewerPage?.setAttribute('inert', '');
+    desktopRail?.setAttribute('inert', '');
+
+    mediaViewerStage.replaceChildren(activeViewerMedia);
+    mediaViewer.hidden = false;
+    window.requestAnimationFrame(() => {
+      fitViewerMedia();
+      mediaViewerClose.focus({ preventScroll: true });
+    });
+
+    trigger.blur();
+  };
+
+  mediaFrames.forEach((frame) => {
+    const source = frame.querySelector(':scope > img, :scope > video');
+    if (!source) return;
+
+    frame.classList.add('is-viewable');
+    frame.tabIndex = 0;
+    frame.setAttribute('role', 'button');
+    frame.setAttribute('aria-haspopup', 'dialog');
+    frame.setAttribute(
+      'aria-label',
+      source instanceof HTMLVideoElement ? 'Open video fullscreen' : 'Open image fullscreen'
+    );
+
+    frame.addEventListener('click', () => openMediaViewer(source, frame));
+    frame.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      openMediaViewer(source, frame);
+    });
+  });
+
+  mediaViewerClose.addEventListener('click', closeMediaViewer);
+
+  mediaViewer.addEventListener('click', (event) => {
+    if (event.target === mediaViewer || event.target === mediaViewerStage) {
+      closeMediaViewer();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !mediaViewer.hidden) {
+      closeMediaViewer();
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (!mediaViewer.hidden) fitViewerMedia();
+  });
+}
