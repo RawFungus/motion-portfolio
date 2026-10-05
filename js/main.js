@@ -51,3 +51,53 @@ if (videos.length) {
 
   videos.forEach((video) => videoObserver.observe(video));
 }
+
+// Компактное desktop-оглавление появляется только после Intro.
+// Оно не участвует во внутренней сетке проектов; на широких экранах
+// под него резервируется только внешнее пространство слева от main.
+const desktopRail = document.querySelector('[data-desktop-rail]');
+const introSection = document.querySelector('#intro');
+const desktopRailMedia = window.matchMedia('(min-width: 1440px)');
+
+const setDesktopRailVisible = (visible) => {
+  if (!desktopRail) return;
+
+  const shouldShow = Boolean(visible && desktopRailMedia.matches);
+  desktopRail.classList.toggle('is-visible', shouldShow);
+  desktopRail.setAttribute('aria-hidden', String(!shouldShow));
+};
+
+let railUpdateQueued = false;
+const updateDesktopRail = () => {
+  railUpdateQueued = false;
+  if (!desktopRail || !introSection) return;
+
+  const introRect = introSection.getBoundingClientRect();
+  const introMostlyPassed = introRect.bottom <= window.innerHeight * 0.28;
+  setDesktopRailVisible(introMostlyPassed);
+};
+
+const requestDesktopRailUpdate = () => {
+  if (railUpdateQueued) return;
+  railUpdateQueued = true;
+  window.requestAnimationFrame(updateDesktopRail);
+};
+
+window.addEventListener('scroll', requestDesktopRailUpdate, { passive: true });
+window.addEventListener('resize', requestDesktopRailUpdate);
+
+if (desktopRailMedia.addEventListener) {
+  desktopRailMedia.addEventListener('change', requestDesktopRailUpdate);
+} else if (desktopRailMedia.addListener) {
+  desktopRailMedia.addListener(requestDesktopRailUpdate);
+}
+
+document.querySelectorAll('.project-index a[href^="#"], .desktop-rail a[href^="#"]').forEach((link) => {
+  link.addEventListener('click', () => {
+    const targetId = link.getAttribute('href').slice(1);
+    setActiveLink(targetId);
+    setDesktopRailVisible(targetId !== 'intro');
+  });
+});
+
+requestDesktopRailUpdate();

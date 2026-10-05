@@ -647,3 +647,77 @@ h1 {
     transition: none;
   }
 }
+
+/* Desktop project rail: kept outside the content grid so project internals stay untouched. */
+.desktop-rail {
+  display: none;
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --rail-space: clamp(150px, 10vw, 180px);
+  }
+
+  .page-shell > main,
+  .site-footer {
+    margin-right: var(--rail-space);
+  }
+
+  .desktop-rail {
+    position: fixed;
+    z-index: 30;
+    top: 50%;
+    right: max(22px, calc((100vw - 1800px) / 2 + 22px));
+    display: flex;
+    width: calc(var(--rail-space) - 28px);
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(calc(-50% + 8px));
+    pointer-events: none;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      visibility 0s linear 180ms;
+  }
+
+  .desktop-rail.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%);
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+
+  .desktop-rail a {
+    display: grid;
+    grid-template-columns: 2.3ch 1fr;
+    gap: 7px;
+    width: fit-content;
+    color: var(--muted);
+    font-size: clamp(13px, .85vw, 16px);
+    line-height: 1.28;
+    letter-spacing: -.015em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 140ms ease;
+  }
+
+  .desktop-rail a:hover {
+    color: var(--soft);
+  }
+
+  .desktop-rail a.is-active {
+    color: var(--accent);
+  }
+
+  .desktop-rail a span {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desktop-rail {
+    transition: none;
+  }
+}
