@@ -311,7 +311,8 @@ h1 {
   height: auto;
 }
 
-.process-strip--hook {
+.process-strip--hook,
+.process-strip--fbox {
   --process-height: clamp(105px, 8vw, 155px);
 }
 
@@ -334,6 +335,27 @@ h1 {
 .process-strip::-webkit-scrollbar-thumb {
   background: #3a3a3a;
   border-radius: 999px;
+}
+
+/* FBox has four stills: keep all of them in one compact desktop row without a horizontal scrollbar. */
+@media (min-width: 981px) {
+  .process-strip--fbox {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .process-strip.process-strip--fbox .media-frame {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .process-strip.process-strip--fbox .media-frame > img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 .placeholder-media {
@@ -1027,7 +1049,8 @@ body.media-viewer-open {
     margin-top: 0;
   }
 
-  .process-strip--hook {
+  .process-strip--hook,
+  .process-strip--fbox {
     --process-height: clamp(155px, 8.0729vw, 310px);
   }
 
