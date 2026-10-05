@@ -101,3 +101,79 @@ document.querySelectorAll('.project-index a[href^="#"], .desktop-rail a[href^="#
 });
 
 requestDesktopRailUpdate();
+
+// The nut in the intro index is driven by page scrolling.
+// Scroll adds angular velocity; after scrolling stops, inertia keeps the nut
+// moving briefly and friction brings it smoothly to rest.
+const indexNut = document.querySelector('[data-index-nut]');
+const reducedMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+if (indexNut) {
+  const SCROLL_FORCE = 0.018;
+  const INERTIA = 0.92;
+  const MAX_ANGULAR_VELOCITY = 10;
+  const STOP_SPEED = 0.02;
+
+  let nutRotation = 0;
+  let angularVelocity = 0;
+  let lastScrollY = window.scrollY;
+  let lastFrameTime = 0;
+  let nutFrameId = null;
+
+  const stopNutAnimation = () => {
+    if (nutFrameId !== null) {
+      window.cancelAnimationFrame(nutFrameId);
+    }
+
+    angularVelocity = 0;
+    lastFrameTime = 0;
+    nutFrameId = null;
+  };
+
+  const animateNut = (timestamp) => {
+    const frameScale = lastFrameTime
+      ? Math.min((timestamp - lastFrameTime) / (1000 / 60), 2)
+      : 1;
+
+    lastFrameTime = timestamp;
+    nutRotation = (nutRotation + angularVelocity * frameScale) % 360;
+    angularVelocity *= Math.pow(INERTIA, frameScale);
+    indexNut.style.transform = `rotate(${nutRotation}deg)`;
+
+    if (Math.abs(angularVelocity) <= STOP_SPEED) {
+      stopNutAnimation();
+      return;
+    }
+
+    nutFrameId = window.requestAnimationFrame(animateNut);
+  };
+
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    const scrollDelta = currentScrollY - lastScrollY;
+    lastScrollY = currentScrollY;
+
+    if (reducedMotionMedia.matches || scrollDelta === 0) return;
+
+    angularVelocity += scrollDelta * SCROLL_FORCE;
+    angularVelocity = Math.max(
+      -MAX_ANGULAR_VELOCITY,
+      Math.min(MAX_ANGULAR_VELOCITY, angularVelocity)
+    );
+
+    if (nutFrameId === null) {
+      nutFrameId = window.requestAnimationFrame(animateNut);
+    }
+  }, { passive: true });
+
+  const handleReducedMotionChange = (event) => {
+    lastScrollY = window.scrollY;
+    if (event.matches) stopNutAnimation();
+  };
+
+  if (reducedMotionMedia.addEventListener) {
+    reducedMotionMedia.addEventListener('change', handleReducedMotionChange);
+  } else if (reducedMotionMedia.addListener) {
+    reducedMotionMedia.addListener(handleReducedMotionChange);
+  }
+}

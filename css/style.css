@@ -157,6 +157,7 @@ h1 {
 }
 
 .index-grid {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(5, 1fr);
@@ -179,6 +180,30 @@ h1 {
 
 .index-grid i:nth-last-child(-n + 6) {
   border-bottom: 0;
+}
+
+/* Decorative 2x2 merged cell in the lower-right corner of the intro index. */
+.index-nut-cell {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  display: grid;
+  width: calc(100% / 3);
+  height: 40%;
+  place-items: center;
+  overflow: hidden;
+  background: var(--accent);
+}
+
+.index-nut {
+  display: block;
+  width: 48%;
+  height: auto;
+  transform-origin: 50% 50%;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
 }
 
 .project {
