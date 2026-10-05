@@ -27,9 +27,27 @@ const navObserver = new IntersectionObserver(
 observedSections.forEach((section) => navObserver.observe(section));
 setActiveLink('intro');
 
+// Все видео на сайте принудительно без звука.
+// Это остается в силе даже если в новом файле появится аудиодорожка.
+const forceMuteVideo = (video) => {
+  const keepMuted = () => {
+    if (!video.muted) video.muted = true;
+    if (video.volume !== 0) video.volume = 0;
+  };
+
+  video.defaultMuted = true;
+  video.muted = true;
+  video.volume = 0;
+  video.setAttribute('muted', '');
+  video.addEventListener('volumechange', keepMuted);
+};
+
+const allVideos = [...document.querySelectorAll('video')];
+allVideos.forEach(forceMuteVideo);
+
 // Автовоспроизведение видео только когда оно находится рядом с viewport.
 // После добавления видео используйте атрибут data-autoplay.
-const videos = [...document.querySelectorAll('video[data-autoplay]')];
+const videos = allVideos.filter((video) => video.hasAttribute('data-autoplay'));
 
 if (videos.length) {
   const videoObserver = new IntersectionObserver(
@@ -293,7 +311,7 @@ if (mediaViewer && mediaViewerStage && mediaViewerClose) {
       activeViewerMedia.controls = true;
       activeViewerMedia.autoplay = true;
       activeViewerMedia.playsInline = true;
-      activeViewerMedia.muted = source.muted;
+      forceMuteVideo(activeViewerMedia);
 
       activeViewerMedia.addEventListener('loadedmetadata', () => {
         const duration = activeViewerMedia.duration;
