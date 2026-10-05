@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Test page for a motion design portfolio on GitHub Pages">
+  <title>Motion Portfolio — GitHub Pages Test</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main>
+    <header class="topbar">
+      <a class="brand" href="#">YOUR NAME</a>
+      <span class="status"><span class="dot"></span> GitHub Pages test</span>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">MOTION DESIGN PORTFOLIO</p>
+      <h1>Если ты видишь эту страницу — GitHub Pages работает.</h1>
+      <p class="lead">Ниже — тестовое MP4. Оно должно запуститься автоматически, без звука и зациклиться.</p>
+    </section>
+
+    <section class="project" aria-labelledby="project-title">
+      <div class="project-meta">
+        <h2 id="project-title">Test motion / 001</h2>
+        <p>Autoplay · muted · loop · playsinline</p>
+      </div>
+
+      <div class="video-frame">
+        <video id="demo-video" autoplay muted loop playsinline preload="metadata">
+          <source src="assets/video/test-motion.mp4" type="video/mp4">
+          Ваш браузер не поддерживает HTML5 video.
+        </video>
+        <div class="video-status" id="video-status">checking video…</div>
+      </div>
+    </section>
+
+    <section class="note">
+      <p>Следующий этап — заменить этот тестовый блок на твои фреймы из Figma и реальные ролики.</p>
+    </section>
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
