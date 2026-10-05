@@ -339,6 +339,12 @@ h1 {
 
 /* FBox has four stills: keep all of them in one compact desktop row without a horizontal scrollbar. */
 @media (min-width: 981px) {
+  /* Keep Text IMP compact enough to read as a single-screen desktop case. */
+  .process-strip--text {
+    --process-height: clamp(90px, 5.2vw, 105px);
+    margin-top: clamp(10px, .625vw, 12px);
+  }
+
   .process-strip--fbox {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1041,7 +1047,8 @@ body.media-viewer-open {
   }
 
   .process-strip--text {
-    --process-height: clamp(210px, 10.9375vw, 420px);
+    --process-height: clamp(105px, 5.4688vw, 210px);
+    margin-top: clamp(12px, .625vw, 24px);
   }
 
   .process-strip--merch {
