@@ -970,6 +970,7 @@ body.media-viewer-open {
 
   .process-strip--merch {
     gap: clamp(14px, .7292vw, 28px);
+    margin-top: 0;
   }
 
   .process-strip--hook {
