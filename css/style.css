@@ -929,3 +929,11 @@ h1 {
     font-size: clamp(16px, .8333vw, 32px);
   }
 }
+
+/* Keep the intro as a complete first screen on desktop. */
+@media (min-width: 981px) {
+  .intro {
+    min-height: calc(100vh - var(--page-pad) - var(--page-pad));
+    min-height: calc(100svh - var(--page-pad) - var(--page-pad));
+  }
+}
